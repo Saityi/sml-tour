@@ -1,0 +1,147 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>A Tour of Standard ML</title>
+  <link rel="shortcut icon" type="image/x-icon" href="../etc/favicon.ico" />
+  <link rel="stylesheet" href="../css/default.css" />
+  <script>
+   document.onkeydown = function navArrow(evt) {
+      if (evt.target.nodeName.toLowerCase() === 'textarea') {
+          return;
+      } else {
+        switch (evt.keyCode) {
+          case 37:
+            window.location.href = document.getElementById("prevpage").href;
+            break;
+          case 39:
+            window.location.href = document.getElementById("nextpage").href;
+            break;
+        }
+      }
+    }
+    /* https://www.w3schools.com/howto/howto_js_responsive_navbar_dropdown.asp */
+    function topNavResponsive() {
+      var x = document.getElementById("tournav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+     }
+
+   function runCode() {
+       var code = document.getElementById("codebox").value;
+       var req = new XMLHttpRequest();
+       req.open('POST', 'https://smltour.net/cgi-bin/sml.sh', true);
+       req.setRequestHeader('Content-type', 'text/plain');
+       req.onreadystatechange = function () {
+           if (this.readyState == 4 && this.status == 200) {
+               document.getElementById("coderan").textContent = this.responseText;
+           }
+       }
+       req.send(code);
+   }
+  </script>
+</head>
+
+<body>
+  <div class="topnav" id="tournav">
+
+    <div class="logol">
+      <a href="../">λ</a>
+    </div>
+
+    <div class="logo">
+      <a href="../">A Tour of Standard ML</a>
+    </div>
+    <div>
+      <a href="../tour/02-05-recursion.html" id="prevpage">
+        <span aria-hidden="true">↤</span>
+      </a>
+    </div>
+
+    <div class="toc-dropdown">
+      <button class="toc-btn">Table of Contents
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="toc">
+        <a href="../tour/00-01-setup.html">0.1 - Setup</a>
+        <a href="../tour/01-00-values.html">1.0 - Values</a>
+        <a href="../tour/01-01-let-expr.html">1.1 - Let expressions</a>
+        <a href="../tour/01-02-basic-data-types.html">1.2 - Basic data types</a>
+        <a href="../tour/01-03-data-structures.html">1.3 - Built-in data structures</a>
+        <a href="../tour/01-04-functions.html">1.4 - Functions</a>
+        <a href="../tour/01-05-fun.html">1.5 - Fun with Functions</a>
+        <a href="../tour/01-06-modules.html">1.6 - Modules</a>
+        <a href="../tour/01-07-mod-sigs.html">1.7 - Module Signatures</a>
+        <a href="../tour/01-08-signatures.html">1.8 - Signatures, continued</a>
+        <a href="../tour/01-09-functors.html">1.9 - Functors</a>
+        <a href="../tour/01-10-new-data-types.html">1.10 - Defining data types</a>
+        <a href="../tour/01-11-recursive-datatypes.html">1.11 - Recursive types</a>
+        <a href="../tour/02-00-pattern-matching.html">2.0 - Pattern matching</a>
+        <a href="../tour/02-01-exhaustive.html">2.1 - Exhaustivity checking</a>
+        <a href="../tour/02-02-deconstr.html">2.2 - Value deconstruction</a>
+        <a href="../tour/02-03-pattern-fun.html">2.3 - Pattern matching in functions</a>
+        <a href="../tour/02-04-cond-expr.html">2.4 - Conditional expressions</a>
+        <a href="../tour/02-05-recursion.html">2.5 - Recursion</a>
+        <a href="../tour/02-06-hofs.html">2.6 - Higher order functions</a>
+        <a href="../tour/02-07-inf.html">2.7 - Infinite loops</a>
+        <a href="../tour/02-08-chaining.html">2.8 - Chaining expressions for side effects</a>
+        <a href="../tour/02-09-mutable-refs.html">2.9 - Mutable references</a>
+        <a href="../tour/02-10-while.html">2.10 - While loops</a>
+        <a href="../tour/03-00-cml-intro.html">3.0 - Concurrent ML Introduction</a>
+        <a href="../tour/03-01-spawn.html">3.1 - Spawning a light-weight thread</a>
+        <a href="../tour/03-02-chan.html">3.2 - Channels</a>
+        <a href="../tour/03-03-select.html">3.3 - Select</a>
+        <a href="../tour/03-04-mailboxes.html">3.4 - Mailboxes</a>
+        <a href="../tour/03-05-ivars.html">3.5 - IVars</a>
+        <a href="../tour/03-06-mvars.html">3.6 - MVars</a>
+        <a href="../tour/welcome.html">0.0 - Welcome</a>
+        </div>
+    </div>
+
+    <div>
+      <a href="../tour/02-07-inf.html" id="nextpage">
+         <span aria-hidden="true">↦</span>
+          </a>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="body">
+      <h2>2.6: Higher order functions</h2>
+      <p>You may frequently avoid direct recursion by use of higher-order functions: pass in a function to another function, which then handles the details of iteration or aggregation using your passed in the function. Examples include:</p>
+<ul>
+<li><code>map f xs</code>, which applies a function <code>f</code> to each element in <code>xs</code>, creating a new list</li>
+<li><code>List.filter p xs</code>, which filters a list using a predicate <code>p</code>, creating a new list containing any items that returned <code>true</code> for <code>p x</code></li>
+<li><code>foldr c s xs</code> lets you combine the items of a list to a summary value, using some combining operation <code>c</code> and a starting value <code>s</code></li>
+</ul>
+</div>
+<div><h3><pre>(* examples/hofs.sml *)</pre></h3>
+<textarea id="codebox" cols="80" rows="24">val twos = map (fn x => x + 1) [1, 1, 1] (* [2, 2, 2] *)
+val two  = List.filter (fn x => x mod 2 = 0) [1, 2, 3] (* [2] *)
+
+(* NOTE: Actually builtin *)
+fun foldr combiner aggregate nil       = aggregate
+  | foldr combiner aggregate (x :: xs) =
+    let val the_rest_combined = foldr combiner aggregate xs
+    in combiner (x, the_rest_combined)
+    end
+
+val sum = foldr (op +) 0
+val s = sum [1, 2, 3]
+
+fun length xs = foldr (fn (_, count) => count + 1) 0 xs
+val l = length [1, 2, 3]
+</textarea>
+<input type="submit" value="Run" onclick="runCode();">
+<div><pre id="coderan"></pre></div></div>
+
+
+  </div>
+</body>
+</html>
